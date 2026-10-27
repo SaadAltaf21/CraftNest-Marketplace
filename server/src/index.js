@@ -31,6 +31,19 @@ app.get('/api/db-check', async (req, res) => {
   } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
 });
 
+// Demo seeding for a fresh production database only.
+// Disabled unless SEED_DEMO=true, and refuses if products already exist.
+// Remove/turn off SEED_DEMO after the first seed.
+app.post('/api/seed-demo', async (req, res) => {
+  try {
+    if (process.env.SEED_DEMO !== 'true') return res.status(403).json({ error: 'Demo seeding is disabled' });
+    const { Product, Category } = require('./models');
+    if ((await Product.countDocuments()) > 0) return res.status(409).json({ error: 'Database already has products' });
+    await require('./seed').seedData();
+    res.json({ ok: true, categories: await Category.countDocuments(), products: await Product.countDocuments() });
+  } catch (e) { res.status(500).json({ ok: false, error: e.message }); }
+});
+
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api', require('./routes/catalog'));
 app.use('/api', require('./routes/commerce'));
