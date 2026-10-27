@@ -5,7 +5,7 @@ CraftNest is an original marketplace brand. It is inspired by Etsy in functional
 ## What is included
 - Customer: register/login, search/filter/sort/pagination, product detail with variations + reviews, cart, wishlist, test checkout + COD, order history, addresses, messages (polling).
 - Seller: onboarding, public shop page `/shop/:slug`, dashboard with real stats, product CRUD, order status updates.
-- Admin: overview, user list, seller approval, product/order lists, coupons, support, audit log. No admin can be created from the public registration form.
+- Admin: overview, user list, seller approval, product/order lists, coupons, support, audit log. Admin registration is code-gated: on the Register page, tick “Register as admin” and enter the ADMIN_REGISTRATION_CODE set in the backend environment. A wrong code returns “Admin code registration is not match” and creates no admin account. The code itself is never stored in the code or the frontend.
 - Server-side price/total calculation — client prices are never trusted. Stock is checked and decremented on order.
 
 ## Run locally (no setup, temporary data)

@@ -12,6 +12,17 @@ r.post('/register', async (req, res) => {
     return res.status(201).json({ token: signToken(user), user: { id: user._id, name: user.name, email: user.email, role: user.role } });
   } catch (e) { return res.status(500).json({ error: e.message }); }
 });
+r.post('/register-admin', async (req, res) => {
+  try {
+    const { name, email, password, adminCode } = req.body || {};
+    if (!name || !email || !password || password.length < 6) return res.status(400).json({ error: 'Name, valid email and password (min 6 chars) are required' });
+    if (!process.env.ADMIN_REGISTRATION_CODE) return res.status(403).json({ error: 'Admin registration is not enabled' });
+    if (!adminCode || adminCode !== process.env.ADMIN_REGISTRATION_CODE) return res.status(403).json({ error: 'Admin code registration is not match' });
+    if (await User.findOne({ email: String(email).toLowerCase() })) return res.status(409).json({ error: 'Email already registered' });
+    const user = await User.create({ name, email: String(email).toLowerCase(), password, role: 'admin' });
+    return res.status(201).json({ token: signToken(user), user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+  } catch (e) { return res.status(500).json({ error: e.message }); }
+});
 r.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body || {};
