@@ -21,19 +21,25 @@ function Header() {
   const nav = useNavigate();
   const [q, setQ] = useState('');
   const [count, setCount] = useState(0);
+  const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => { if (user) api('/cart').then(c => setCount(c.items?.reduce((s, i) => s + i.qty, 0) || 0)).catch(() => {}); }, [user]);
-  return <header><div className="top">CraftNest — handmade, vintage & personalised finds from independent sellers</div>
+  return <header>
     <div className="nav">
-      <Link className="logo" to="/">Craft<span>Nest</span></Link>
+      <div className="nav-top">
+        <Link className="logo" to="/" onClick={() => setMenuOpen(false)}>Craft<span>Nest</span></Link>
+        <button type="button" className="menu-btn" aria-label="Menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(o => !o)}>☰</button>
+      </div>
       <form className="search" onSubmit={e => { e.preventDefault(); nav(`/shop?q=${encodeURIComponent(q)}`); }}>
         <input value={q} onChange={e => setQ(e.target.value)} placeholder="Search handmade jewellery, décor, gifts…" />
         <button>Search</button>
       </form>
-      <Link className="pill" to="/shop">Shop</Link>
-      <Link className="pill" to="/account">♥ Wishlist</Link>
-      <Link className="pill" to="/cart">🛒 Cart ({count})</Link>
-      {user ? <><Link className="pill" to="/account">{user.name}</Link><Link className="pill" to="/messages">Messages</Link>{user.role === 'seller' && <Link className="pill" to="/seller">Seller Dashboard</Link>}{user.role === 'admin' && <Link className="pill" to="/admin">Admin</Link>}<button className="pill" onClick={logout}>Logout</button></> : <><Link className="pill" to="/login">Login</Link><Link className="pill" to="/register">Register</Link></>}
-      <Link className="pill" to="/seller">Sell on CraftNest</Link>
+      <div className={`nav-links${menuOpen ? ' open' : ''}`} onClick={() => setMenuOpen(false)}>
+        <Link className="pill" to="/shop">Shop</Link>
+        <Link className="pill" to="/account">♥ Wishlist</Link>
+        <Link className="pill" to="/cart">🛒 Cart ({count})</Link>
+        {user ? <><Link className="pill" to="/account">{user.name}</Link><Link className="pill" to="/messages">Messages</Link>{user.role === 'seller' && <Link className="pill" to="/seller">Seller Dashboard</Link>}{user.role === 'admin' && <Link className="pill" to="/admin">Admin</Link>}<button className="pill" onClick={logout}>Logout</button></> : <><Link className="pill" to="/login">Login</Link><Link className="pill" to="/register">Register</Link></>}
+        <Link className="pill" to="/seller">Sell on CraftNest</Link>
+      </div>
     </div></header>;
 }
 export default function App() {
