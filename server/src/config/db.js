@@ -5,9 +5,11 @@ let cached = null;
 async function connectDB() {
   if (cached && mongoose.connection.readyState === 1) return cached;
   if (cached) return cached;
-  let uri = process.env.MONGO_URI;
+  let uri = process.env.MONGO_URI || process.env.MONGODB_URI;
   if (!uri) {
     // Local testing only. Production MUST set MONGO_URI (Atlas).
+    // MONGODB_URI is also accepted because Vercel's MongoDB Atlas
+    // integration sets that name automatically.
     const { MongoMemoryServer } = require('mongodb-memory-server');
     memoryServer = await MongoMemoryServer.create();
     uri = memoryServer.getUri();

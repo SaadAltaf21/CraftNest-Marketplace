@@ -48,7 +48,7 @@ if (require.main === module) {
     // `npm run seed` in another process would not be visible here. Auto-seed
     // only when MONGO_URI is unset AND the DB is empty, so production Atlas
     // is never auto-seeded and explicit seeding remains the documented path.
-    if (!process.env.MONGO_URI) {
+    if (!process.env.MONGO_URI && !process.env.MONGODB_URI) {
       const { Product } = require('./models');
       if ((await Product.countDocuments()) === 0) {
         console.log('[craftnest] Local DB empty - auto-seeding demo data (in-memory only)');
